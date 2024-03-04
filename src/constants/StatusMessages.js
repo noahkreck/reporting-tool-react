@@ -1,0 +1,5 @@
+export const irrelevantResponse = "As the generated report was not entirely relevant (received a relevance rating of less than 5), please provide feedback to refine the assistant's understanding of your scenario. You can repeat this process until you receive a report that is aligned with your scenario's requirements or your scenario has reached a maxmiun iteration count of: "
+
+export const relevantResponse = "Your report has been fulfilled. To download the generated report, please input your scenario name and save it in the input field below. This will enable the download report button to save a csv copy of your report, and save the latest response for your current scenario for future use."
+
+export const followUpResponse = "If you wish to ask any follow up questions regarding the report or receive suggestions for downstream use, please ask below. Please note that further prompting will not return a new report and will only receive a explanation from the assistant to assist fulfilling your additional request."
