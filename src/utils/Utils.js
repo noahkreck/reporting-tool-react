@@ -2,59 +2,36 @@ import { Grid } from "gridjs";
 import "gridjs/dist/theme/mermaid.css";
 import React, { useEffect, useRef } from 'react';
 
-// Utility function to generate HTML table from data array
-export const generateHtmlTable = (dataArray) => {
-    if (!dataArray || dataArray.length === 0) return '<div>No data to display</div>';
+// // Utility function to generate HTML table from data array
+// export const generateHtmlTable = (dataArray) => {
+//     if (!dataArray || dataArray.length === 0) return '<div>No data to display</div>';
 
-    let tableHtml = '<table>';
+//     let tableHtml = '<table>';
     
-    // Generate header row
-    tableHtml += '<thead><tr>';
-    Object.keys(dataArray[0]).forEach(column => {
-        tableHtml += `<th>${column}</th>`;
-    });
-    tableHtml += '</tr></thead>';
+//     // Generate header row
+//     tableHtml += '<thead><tr>';
+//     Object.keys(dataArray[0]).forEach(column => {
+//         tableHtml += `<th>${column}</th>`;
+//     });
+//     tableHtml += '</tr></thead>';
     
-    // Generate data rows
-    tableHtml += '<tbody>';
-    dataArray.forEach(row => {
-        tableHtml += '<tr>';
-        Object.values(row).forEach(cell => {
-            tableHtml += `<td>${cell}</td>`;
-        });
-        tableHtml += '</tr>';
-    });
-    tableHtml += '</tbody>';
-    tableHtml += '</table>'; // Close the table tag
+//     // Generate data rows
+//     tableHtml += '<tbody>';
+//     dataArray.forEach(row => {
+//         tableHtml += '<tr>';
+//         Object.values(row).forEach(cell => {
+//             tableHtml += `<td>${cell}</td>`;
+//         });
+//         tableHtml += '</tr>';
+//     });
+//     tableHtml += '</tbody>';
+//     tableHtml += '</table>'; // Close the table tag
 
-    // Append a separate div for the row count below the table
-    tableHtml += `<div class="table-row-count">Row Count: ${dataArray.length}</div>`;
+//     // Append a separate div for the row count below the table
+//     tableHtml += `<div class="table-row-count">Row Count: ${dataArray.length}</div>`;
     
-    return tableHtml;
-};
-
-export const generateReportGrid = (dataArray) => {
-    if (!dataArray || dataArray.length === 0) return null;
-
-    // Extract column names from the first object's keys
-    const columns = Object.keys(dataArray[0]).map(key => key.charAt(0).toUpperCase() + key.slice(1)); // Capitalize first letter of each column name
-
-    // Construct the Grid object
-    const grid = new Grid({
-        columns: columns,
-        data: dataArray.map(row => {
-            // Convert each row object's keys to match the column names
-            const formattedRow = {};
-            Object.keys(row).forEach(key => {
-                const formattedKey = key.charAt(0).toUpperCase() + key.slice(1); // Capitalize first letter
-                formattedRow[formattedKey] = row[key];
-            });
-            return formattedRow;
-        })
-    });
-
-    return grid;
-};
+//     return tableHtml;
+// };
 
 export const GridComponent = ({ dataArray }) => {
     const gridRef = useRef(null);

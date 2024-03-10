@@ -40,6 +40,32 @@ body {
   margin-right: 10px;
 }
 
+.sidebar-toggle {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 0 5px 5px 0;
+  background: none;
+}
+
+/* Adjust the SVG icon color and size if needed */
+.sidebar-toggle svg {
+  fill: #333;
+}
+
+/* Additional styles for when the sidebar is visible */
+.sidebar-visible {
+  left: 300px; /* Assuming the sidebar width is 300px */
+}
+
+/* Styles for when the sidebar is hidden */
+.sidebar-hidden {
+  left: 0;
+}
+
 .bottom {
   border-top: solid 0.5px #E4E4E4;
   background-color: transparent;
@@ -110,7 +136,7 @@ nav p {
   margin-bottom: 15px;
   display: flex;
   align-items: center;
-  width: 60%;
+  width: 50%;
 }
 
 .input-container input {
@@ -183,14 +209,14 @@ input:focus {
   background-color: #ffffff;
   color: #333333;
   padding: 10px 20px;
-  margin-right: 20px;
+  /* margin-right: 20px; */
   position: fixed;
   width: calc(100% - 20px);
   border-bottom: 1px solid #d3d3d3;
   z-index: 1000;
   top: 0;
-  border-radius: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* border-radius: 15px; */
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
   margin-bottom: 20px;
 }
 
@@ -438,7 +464,7 @@ tr:hover {
   visibility: hidden;
   width: auto; /* Let the width fit the content */
   background-color: #f9f9f9; /* Lighter background for subtlety */
-  color: #666; /* Dark gray color for text */
+  color: black; /* Dark gray color for text */
   text-align: center;
   border-radius: 6px;
   padding: 5px; /* Adjust padding as needed */

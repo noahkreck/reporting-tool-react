@@ -1,10 +1,7 @@
-import React from 'react';
-
-import {useState, useEffect, useRef} from 'react'
+import { useState, useEffect, useRef, React} from 'react'
 import { querySystemPrompts, explanationSystemPrompt } from './constants/Prompts';
 
-import {OvalLoader, CommentLoader, ThreeDotsLoader} from './components/Loaders';
-
+import { OvalLoader, CommentLoader, ThreeDotsLoader} from './components/Loaders';
 // import { queryModel, explanationModel } from './constants/Models';
 // import { reportingFunctions} from './constants/Functions';
 
@@ -12,9 +9,10 @@ import { irrelevantResponse, relevantResponse, followUpResponse } from './consta
 
 import { GridComponent, highlightSyntax, downloadReport } from './utils/Utils';
 
-// import TopBar from './components/TopBar';
-// import Sidebar from './components/Sidebar';
-// import Feed from './components/Feed';
+import SidebarToggle from './components/ToggleSideBar';
+import TopBar from './components/TopBar';
+import Sidebar from './components/Sidebar';
+import Feed from './components/Feed';
 
 import hljs from 'highlight.js/lib/core';
 import http from 'highlight.js/lib/languages/http';
@@ -55,6 +53,8 @@ const App = () => {
             isQueryVisible: queryVisibleFlag
         }
     ])
+
+    const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
     //Set report array with data retrieved from report request
     const [reportArray, setReportArray] = useState([])
@@ -241,6 +241,10 @@ const App = () => {
             }
             return item;
         }));
+    };
+
+    const toggleSidebar = () => {
+        setIsSidebarVisible(!isSidebarVisible);
     };
 
     const handleRatingChange = (e) => {
@@ -468,7 +472,6 @@ const App = () => {
 
     }
 
-
     const handleSelectScenario = (index) => {
         setShouldScroll(false); // Prevent scrolling
         const selectedScenario = structuredClone(savedScenarios[index]);
@@ -492,7 +495,87 @@ const App = () => {
     }, [savedScenarioFlag])
 
     return (
+        <div className='app'>
+            <SidebarToggle isSidebarVisible={isSidebarVisible} toggleSidebar={toggleSidebar}/>
+            <TopBar/>
+            <Sidebar 
+                isSidebarVisible={isSidebarVisible} 
+                createNewScenario={createNewScenario} 
+                savedScenarios={savedScenarios} 
+                handleSelectScenario={handleSelectScenario} />
+            <section className="main">
+            <Feed 
+                responsePrintList={responsePrintList} 
+                toggleQueryVisibility={toggleQueryVisibility} 
+                processReward={processReward} 
+                rewardRating={rewardRating} 
+                feedRef={feedRef} 
+                finishedFailedScenario={finishedFailedScenario}
+                errorMessage={errorMessage}
+                scenarioStatusMessage={scenarioStatusMessage}
+                finishedSuccessfulScenario={finishedSuccessfulScenario}
+                savedScenarioFlag={savedScenarioFlag}
+                savedScenarioName={savedScenarioName}
+                setSavedScenarioName={setSavedScenarioName}
+                saveResponse={saveResponse}
+                downloadedReportFlag={downloadedReportFlag}
+                downloadReport={downloadReport}
+                reportArray={reportArray}
+                setDownloadedReportFlag={setDownloadedReportFlag}
+                inputText={inputText}
+            />
+            <div className="bottom-section">
+                    {errorMessage && !scenarioStatusMessage && (
+                        <div className="error-message">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+                            <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                            </svg>
+                            {errorMessage}
+                        </div>
+                    )}
+                    {!hideInputFlag && (
+                        <div className="input-container">
+                            <input
+                                placeholder="Type your message here..."
+                                value={inputText}
+                                onChange={(e) => setInputText(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && !e.shiftKey && inputText.trim() !== "") {
+                                        document.getElementById('submit').click();
+                                    }
+                                }}
+                            />
+                            <button 
+                                id="submit" 
+                                className={inputText.trim() === "" ? "disabled" : ""} 
+                                onClick={awaitingFeedback ? processFollowUp : executeAppFunction}
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    )}
+                    <div className='app-function'><b>Function:</b> {appFunction}</div>
+                </div>
+            </section>
+        </div>
+
+    );
+
+
+    //Old
+    return (
         <div className="app">
+            <button className={`sidebar-toggle ${isSidebarVisible ? 'sidebar-visible' : 'sidebar-hidden'}`} onClick={toggleSidebar} aria-label="Toggle sidebar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    {isSidebarVisible ? (
+                        <path d="M15 19l-8-7 8-7v14z"/> // Left-facing arrow
+                    ) : (
+                        <path d="M9 5l8 7-8 7V5z"/> // Right-facing arrow
+                    )}
+                </svg>
+            </button>
             <div className="top-bar">
                 <div className="left-container">
                     <img src="/demo-company.png" alt="Company Logo" className="app-icon"/>
@@ -503,22 +586,24 @@ const App = () => {
                 </p>
             </div>
 
-            <section className="side-bar">
-                <button className="new-chat-btn" onClick={createNewScenario}>+  New Scenario</button>
-                <div className="chat-history">
-                    <div className="history-header">Saved Scenarios</div>
-                    <ul className="history-items">
-                    {savedScenarios.map((scenario, index) => (
-                            <li key={index} className="history-item" onClick={() => handleSelectScenario(index)}>
-                                {scenario.scenarioName}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-                <nav>
-                    <p>Settings</p>
-                </nav>
-            </section>
+            {isSidebarVisible && (
+                <section className="side-bar">
+                    <button className="new-chat-btn" onClick={createNewScenario}>+  New Scenario</button>
+                    <div className="chat-history">
+                        <div className="history-header">Saved Scenarios</div>
+                        <ul className="history-items">
+                        {savedScenarios.map((scenario, index) => (
+                                <li key={index} className="history-item" onClick={() => handleSelectScenario(index)}>
+                                    {scenario.scenarioName}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    <nav>
+                        <p>Settings</p>
+                    </nav>
+                </section>
+            )}
             <section className="main">
                 <ul className="feed" ref={feedRef}>
                     {responsePrintList.map((item, index) => (
@@ -699,8 +784,8 @@ const App = () => {
                     )}
                     <div className='app-function'><b>Function:</b> {appFunction}</div>
                 </div>
-            </section>
-        </div>
+               </section>
+           </div>
     );
 
 }
